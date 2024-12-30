@@ -1,26 +1,55 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { UserDocument } from 'src/users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async validateUser(email: string, password: string): Promise<UserDocument> {
+    const user = await this.usersService.findOne({ email });
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isPasswordValid = await user.comparePassword(password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    return user;
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async login(user: UserDocument) {
+    const payload = {
+      sub: user._id,
+      email: user.email,
+      userType: user.userType,
+    };
+
+    return {
+      user: {
+        _id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        userType: user.userType,
+      },
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
+  async findUserByEmail(email: string): Promise<UserDocument | null> {
+    return this.usersService.findOne({ email });
   }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  async createUser(userData: any): Promise<UserDocument> {
+    return this.usersService.create(userData);
   }
 }

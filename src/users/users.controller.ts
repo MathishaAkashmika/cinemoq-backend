@@ -6,37 +6,56 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { ClsService } from 'nestjs-cls';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { AppClsStore } from 'src/Types/users.types';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 
-@Controller('users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+@ApiTags('user')
+@Controller({ path: 'user', version: '1' })
+export class UserController {
+  constructor(
+    private readonly userService: UsersService,
+    private readonly clsService: ClsService,
+  ) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create user' })
   create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+    return this.userService.create(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('/profile')
+  @ApiOperation({ summary: 'Update user profile' })
+  updateProfile(@Body() updateUserDto: UpdateUserDto) {
+    const context = this.clsService.get<AppClsStore>();
+    if (!context || !context.user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    return this.userService.update(context.user.id, updateUserDto);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+    return this.userService.findOne({ _id: id });
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+    return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    return this.userService.remove(id);
   }
 }

@@ -35,7 +35,7 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle(' Inventory Management system')
+    .setTitle('Inventory Management system')
     .setDescription(' Inventory Management system Backend API')
     .setVersion('1.0')
     .addTag('IMS')
@@ -45,6 +45,6 @@ async function bootstrap() {
   SwaggerModule.setup('doc', app, document);
   app.enableCors();
 
-  await app.listen(9000);
+  await app.listen(8080);
 }
 bootstrap();
