@@ -4,7 +4,6 @@ import {
   Body,
   UseGuards,
   Get,
-  Request,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
@@ -73,7 +72,11 @@ export class AuthController {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     }
     console.log(context.user);
+
     const user = await this.usersService.findOne({ _id: context.user.id });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
     return {
       id: user._id,
       email: user.email,

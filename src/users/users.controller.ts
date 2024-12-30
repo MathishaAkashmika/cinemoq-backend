@@ -49,9 +49,15 @@ export class UserController {
     return this.userService.findOne({ _id: id });
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Patch()
+  update(@Body() updateUserDto: UpdateUserDto) {
+    const context = this.clsService.get<AppClsStore>();
+    if (!context || !context.user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    return this.userService.update(context.user.id, updateUserDto);
   }
 
   @Delete(':id')
