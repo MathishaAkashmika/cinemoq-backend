@@ -28,6 +28,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     this.cls.set<AppClsStore>('user', {
       id: payload.sub,
       email: payload.email,
+      type: payload.userType,
     });
     return { _id: payload.sub, email: payload.email };
   }

@@ -14,12 +14,15 @@ import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from 'src/users/users.service';
 import { SignupDto } from './dto/signup.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AppClsStore } from 'src/Types/users.types';
+import { ClsService } from 'nestjs-cls';
 
 @Controller({ path: 'auth', version: '1' })
 @ApiTags('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
+    private readonly clsService: ClsService,
     private readonly usersService: UsersService,
   ) {}
 
@@ -64,8 +67,13 @@ export class AuthController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Get('profile')
-  async getProfile(@Request() req) {
-    const user = await this.usersService.findOne({ _id: req.user._id });
+  async getProfile() {
+    const context = this.clsService.get<AppClsStore>();
+    if (!context || !context.user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    console.log(context.user);
+    const user = await this.usersService.findOne({ _id: context.user.id });
     return {
       id: user._id,
       email: user.email,
