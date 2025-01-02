@@ -9,6 +9,8 @@ import { ClsModule } from 'nestjs-cls';
 import { AuthModule } from './auth/auth.module';
 import mongoose from 'mongoose';
 import { UserModule } from './users/users.module';
+import { MoviesModule } from './movies/movies.module';
+import { FileStorageModule } from './file-storage/file-storage.module';
 
 mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
   Logger.verbose(
@@ -49,6 +51,8 @@ mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
     }),
     AuthModule,
     UserModule,
+    MoviesModule,
+    FileStorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
