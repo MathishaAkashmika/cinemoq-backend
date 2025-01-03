@@ -7,25 +7,14 @@ import {
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
-import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  // Configure CORS
-  app.enableCors({
-    origin: true, // or specify your frontend URL like 'http://localhost:3000'
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true,
-    allowedHeaders: 'Content-Type, Accept, Authorization',
+  const app = await NestFactory.create(AppModule, {
+    cors: true,
+    rawBody: true,
+    bodyParser: true,
   });
-
-  // Configure body parser with larger limits
-  app.use(bodyParser.json({ limit: '50mb' }));
-  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-
   useRequestLogging(app);
-
   app.enableVersioning({
     type: VersioningType.URI,
   });
@@ -54,6 +43,7 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('doc', app, document);
+  app.enableCors();
 
   await app.listen(8080);
 }
