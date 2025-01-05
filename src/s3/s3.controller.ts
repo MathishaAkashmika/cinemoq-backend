@@ -16,8 +16,8 @@ export class S3Controller {
     description: 'The presigned url has been successfully generated.',
     type: GeneratePresignedUrlResponseDto,
   })
-  @UseGuards(AuthGuard('jwt'))
-  @ApiBearerAuth()
+  // @UseGuards(AuthGuard('jwt'))
+  // @ApiBearerAuth()
   @Post('generate-presigned-url')
   create(
     @Body() generatePresignedUrlDto: GeneratePresignedUrlDto,
