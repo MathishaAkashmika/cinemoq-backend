@@ -11,6 +11,7 @@ import mongoose from 'mongoose';
 import { UserModule } from './users/users.module';
 import { S3Module } from './s3/s3.module';
 import { MoviesModule } from './movies/movies.module';
+import { ShowtimeModule } from './showtimes/showtimes.module';
 
 mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
   Logger.verbose(
@@ -57,6 +58,7 @@ mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
     UserModule,
     S3Module,
     MoviesModule,
+    ShowtimeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
