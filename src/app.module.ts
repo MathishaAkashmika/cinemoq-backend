@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import mongoose from 'mongoose';
 import { UserModule } from './users/users.module';
 import { S3Module } from './s3/s3.module';
+import { MoviesModule } from './movies/movies.module';
 
 mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
   Logger.verbose(
@@ -55,6 +56,7 @@ mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
     AuthModule,
     UserModule,
     S3Module,
+    MoviesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
