@@ -11,6 +11,8 @@ import {
   ParseBoolPipe,
   ParseIntPipe,
   Query,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -22,15 +24,37 @@ import { AuthGuard } from '@nestjs/passport';
 import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
+import { AppClsStore, UserType } from 'src/Types/users.types';
+import { ClsService } from 'nestjs-cls';
+import { UsersService } from 'src/users/users.service';
 
 @ApiTags('movie')
 @Controller({ path: 'movie', version: '1' })
 export class MovieController {
-  constructor(private readonly moviesService: MoviesService) {}
+  constructor(
+    private readonly moviesService: MoviesService,
+    private readonly clsService: ClsService,
+    private readonly usersService: UsersService,
+  ) {}
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   @ApiOperation({ summary: 'Create movie' })
-  create(@Body() createMovieDto: CreateMovieDto) {
+  async create(@Body() createMovieDto: CreateMovieDto) {
+    const context = this.clsService.get<AppClsStore>();
+    if (!context || !context.user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.usersService.findOne({ _id: context.user.id });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    if (user.userType !== UserType.ADMIN) {
+      console.log('User is not admin');
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
     return this.moviesService.create(createMovieDto);
   }
 
@@ -108,7 +132,23 @@ export class MovieController {
   @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   @ApiOperation({ summary: 'Update movie' })
-  update(@Param('id') id: string, @Body() updateMovieDto: UpdateMovieDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateMovieDto: UpdateMovieDto,
+  ) {
+    const context = this.clsService.get<AppClsStore>();
+    if (!context || !context.user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.usersService.findOne({ _id: context.user.id });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    if (user.userType !== UserType.ADMIN) {
+      console.log('User is not admin');
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
     return this.moviesService.update(id, updateMovieDto);
   }
 
@@ -116,7 +156,20 @@ export class MovieController {
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   @ApiOperation({ summary: 'Delete movie' })
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
+    const context = this.clsService.get<AppClsStore>();
+    if (!context || !context.user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.usersService.findOne({ _id: context.user.id });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    if (user.userType !== UserType.ADMIN) {
+      console.log('User is not admin');
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
     return this.moviesService.remove(id);
   }
 }
