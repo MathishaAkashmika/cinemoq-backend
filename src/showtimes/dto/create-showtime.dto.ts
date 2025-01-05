@@ -18,7 +18,7 @@ export class CreateShowtimeDto {
   })
   @IsNotEmpty()
   @IsMongoId()
-  movieId: string;
+  movie: string;
 
   @ApiProperty({
     description: 'Show date',
