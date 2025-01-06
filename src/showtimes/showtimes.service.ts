@@ -1,9 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, PaginateModel } from 'mongoose';
+import { Model, PaginateModel, Types } from 'mongoose';
 import { CreateShowtimeDto } from './dto/create-showtime.dto';
 import { UpdateShowtimeDto } from './dto/update-showtime.dto';
 import { Showtime, ShowtimeDocument } from './entities/showtime.entity';
+import { SchedulerRegistry } from '@nestjs/schedule';
 
 @Injectable()
 export class ShowtimeService {
@@ -11,26 +12,29 @@ export class ShowtimeService {
     @InjectModel(Showtime.name)
     private showtimeModel: Model<ShowtimeDocument> &
       PaginateModel<ShowtimeDocument>,
-  ) {}
+    private schedulerRegistry: SchedulerRegistry
+  ) { }
 
   async create(
     createShowtimeDto: CreateShowtimeDto,
   ): Promise<ShowtimeDocument> {
     const showtime = new this.showtimeModel({
       ...createShowtimeDto,
-      availableSeats: createShowtimeDto.totalSeats,
       bookedSeats: [],
+      lockedSeats: [],
     });
     return showtime.save();
   }
 
   async findAll(query: any) {
-    const { page = 1, limit = 10, movie, startDate, endDate, isActive } = query;
+    let { page = 1, limit = 10, movieId, startDate, endDate, active } = query;
+    page = parseInt(page);
+    limit = parseInt(limit);
 
     const filter: any = {};
 
-    if (movie) {
-      filter.movie = movie;
+    if (movieId) {
+      filter.movieId = new Types.ObjectId(movieId);
     }
 
     if (startDate || endDate) {
@@ -39,22 +43,20 @@ export class ShowtimeService {
       if (endDate) filter.showDate.$lte = new Date(endDate);
     }
 
-    if (isActive !== undefined) {
-      filter.isActive = isActive === 'true';
+    if (active !== undefined) {
+      filter.active = active === 'true';
     }
 
     return this.showtimeModel.paginate(filter, {
       page,
       limit,
       sort: { showDate: 1, startTime: 1 },
-      populate: 'movie',
     });
   }
 
   async findOne(id: string): Promise<ShowtimeDocument> {
     const showtime = await this.showtimeModel
       .findById(id)
-      .populate('movie')
       .exec();
 
     if (!showtime) {
@@ -73,9 +75,7 @@ export class ShowtimeService {
     // Don't allow updating if seats are already booked
     if (
       showtime.bookedSeats.length > 0 &&
-      (updateShowtimeDto.totalSeats ||
-        updateShowtimeDto.showDate ||
-        updateShowtimeDto.startTime)
+      (updateShowtimeDto.totalSeats || updateShowtimeDto.startTime)
     ) {
       throw new HttpException(
         'Cannot update showtime with booked seats',
@@ -85,7 +85,6 @@ export class ShowtimeService {
 
     return this.showtimeModel
       .findByIdAndUpdate(id, updateShowtimeDto, { new: true })
-      .populate('movie')
       .exec();
   }
 
@@ -100,5 +99,56 @@ export class ShowtimeService {
     }
 
     return this.showtimeModel.findByIdAndDelete(id).exec();
+  }
+
+  async lockSeat(id: string, _userId: string, row: number, col: number, delay: number): Promise<boolean> {
+    const userId = new Types.ObjectId(_userId);
+    const showtime = await this.showtimeModel.findById(id);
+
+    if (!showtime) return false;
+	if (showtime.lockedSeats.some((s) => (s.row === row && s.col === col))) return false;
+	if (showtime.bookedSeats.some((s) => (s.row === row && s.col === col))) return false;
+
+    await showtime.updateOne({ $push: { lockedSeats: { userId, row, col } } });
+
+    if (delay > 0) {
+      const timeout = setTimeout(() => {
+        this.showtimeModel.findByIdAndUpdate(id, { $pull: { lockedSeats: { userId, row, col } } })
+      }, delay);
+
+      this.schedulerRegistry.addTimeout(`${id}-${_userId}-${row}-${col}-lock`, timeout);
+    }
+
+    return true;
+  }
+
+  async unlockSeat(id: string, _userId: string, row: number, col: number): Promise<boolean> {
+    const userId = new Types.ObjectId(_userId);
+    const showtime = await this.showtimeModel.findById(id);
+
+    if (!showtime || !(showtime.lockedSeats.some((s) => (s.userId.toString() === _userId && s.row === row && s.col === col)))) return false;
+
+    await showtime.updateOne({ $pull: { lockedSeats: { userId, row, col } } });
+
+    const name = `${id}-${_userId}-${row}-${col}-lock`;
+    if (this.schedulerRegistry.doesExist("timeout", name)) {
+      this.schedulerRegistry.deleteTimeout(name);
+    }
+
+	return true;
+  }
+
+  async bookSeat(id: string, row: number, col: number): Promise<void> {
+    const showtime = await this.showtimeModel.findById(id);
+    if (!showtime || showtime.lockedSeats.some((s) => (s.row === row && s.col === col))) return;
+
+    await this.showtimeModel.findByIdAndUpdate(id, { $push: { bookedSeats: { row, col } } })
+  }
+
+  async unbookSeat(id: string, row: number, col: number): Promise<void> {
+    const showtime = await this.showtimeModel.findById(id);
+    if (!showtime || !(showtime.bookedSeats.some((s) => (s.row === row && s.col === col)))) return;
+
+    await this.showtimeModel.findByIdAndUpdate(id, { $pull: { bookedSeats: { row, col } } })
   }
 }

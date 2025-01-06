@@ -12,6 +12,8 @@ import { UserModule } from './users/users.module';
 import { S3Module } from './s3/s3.module';
 import { MoviesModule } from './movies/movies.module';
 import { ShowtimeModule } from './showtimes/showtimes.module';
+import { BookingsModule } from './bookings/bookings.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
   Logger.verbose(
@@ -22,6 +24,7 @@ mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
@@ -31,6 +34,8 @@ mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
         AWS_BUCKET_NAME: Joi.string().required(),
         AWS_ACCESS_KEY_ID: Joi.string().required(),
         AWS_SECRET_ACCESS_KEY: Joi.string().required(),
+        PAYHERE_MERCHANT_ID: Joi.string().required(),
+        PAYHERE_MERCHANT_SECRET: Joi.string().required(),
       }),
     }),
     MongooseModule.forRoot(
@@ -59,6 +64,7 @@ mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
     S3Module,
     MoviesModule,
     ShowtimeModule,
+    BookingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

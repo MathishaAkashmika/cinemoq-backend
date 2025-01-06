@@ -16,6 +16,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { CreateShowtimeDto } from './dto/create-showtime.dto';
 import { UpdateShowtimeDto } from './dto/update-showtime.dto';
@@ -24,6 +25,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { AppClsStore, UserType } from 'src/Types/users.types';
 import { UsersService } from 'src/users/users.service';
 import { ClsService } from 'nestjs-cls';
+import { LockSeatShowtimeDto } from './dto/lock-seat-showtime.dto';
 
 @ApiTags('showtimes')
 @Controller({ path: 'showtimes', version: '1' })
@@ -111,5 +113,47 @@ export class ShowtimeController {
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
     return this.showtimeService.remove(id);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('/lock/:id')
+  @ApiOperation({ summary: 'Lock a seat' })
+  async lockSeat(
+    @Param('id') id: string,
+    @Body() lockSeatShowtimeDto: LockSeatShowtimeDto,
+  ) {
+    const context = this.clsService.get<AppClsStore>();
+    if (!context || !context.user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.usersService.findOne({ _id: context.user.id });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+
+    return this.showtimeService.lockSeat(id, context.user.id, lockSeatShowtimeDto.row, lockSeatShowtimeDto.col, 2 * 60 * 1000);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('/unlock/:id')
+  @ApiOperation({ summary: 'Unlock a seat' })
+  async unlockSeat(
+    @Param('id') id: string,
+    @Body() lockSeatShowtimeDto: LockSeatShowtimeDto,
+  ) {
+    const context = this.clsService.get<AppClsStore>();
+    if (!context || !context.user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.usersService.findOne({ _id: context.user.id });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+
+    return this.showtimeService.unlockSeat(id, user.id, lockSeatShowtimeDto.row, lockSeatShowtimeDto.col);
   }
 }

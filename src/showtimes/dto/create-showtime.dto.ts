@@ -11,6 +11,20 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
+class SeatLayout {
+  @ApiProperty({
+	description: 'Row of seat',
+	example: 5,
+  })
+  rows: number;
+
+  @ApiProperty({
+	description: 'Column of seat',
+	example: 6,
+  })
+  cols: number;
+}
+
 export class CreateShowtimeDto {
   @ApiProperty({
     description: 'Movie ID reference',
@@ -18,16 +32,7 @@ export class CreateShowtimeDto {
   })
   @IsNotEmpty()
   @IsMongoId()
-  movie: string;
-
-  @ApiProperty({
-    description: 'Show date',
-    example: '2024-01-05',
-  })
-  @IsNotEmpty()
-  @IsDate()
-  @Type(() => Date)
-  showDate: Date;
+  movieId: string;
 
   @ApiProperty({
     description: 'Start time of the show',
@@ -46,14 +51,6 @@ export class CreateShowtimeDto {
   @IsDate()
   @Type(() => Date)
   endTime: Date;
-
-  @ApiPropertyOptional({
-    description: 'Whether the showtime is active',
-    default: true,
-  })
-  @IsOptional()
-  @IsBoolean()
-  isActive?: boolean;
 
   @ApiProperty({
     description: 'Total number of seats',
@@ -77,16 +74,17 @@ export class CreateShowtimeDto {
 
   @ApiProperty({
     description: 'Screen or theater number',
-    example: 'SCREEN-1',
+    example: 1,
   })
   @IsNotEmpty()
   @IsString()
-  screenNumber: string;
+  screenNo: number;
 
   @ApiPropertyOptional({
     description: 'Seat layout configuration',
     example: { rows: 10, columns: 10 },
   })
+  @Type(() => SeatLayout)
   @IsOptional()
-  seatLayout?: Record<string, any>;
+  seatLayout?: SeatLayout;
 }
