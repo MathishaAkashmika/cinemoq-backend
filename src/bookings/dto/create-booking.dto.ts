@@ -40,7 +40,7 @@ export class CreateBookingDto {
 
   @ApiProperty({
     description: 'Seats',
-    example: [{row: 5, col: 4}],
+    example: [{ row: 5, col: 4 }],
   })
   @Type(() => Seat)
   @IsArray()

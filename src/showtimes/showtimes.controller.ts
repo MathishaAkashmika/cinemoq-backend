@@ -133,7 +133,13 @@ export class ShowtimeController {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     }
 
-    return this.showtimeService.lockSeat(id, context.user.id, lockSeatShowtimeDto.row, lockSeatShowtimeDto.col, 2 * 60 * 1000);
+    return this.showtimeService.lockSeat(
+      id,
+      context.user.id,
+      lockSeatShowtimeDto.row,
+      lockSeatShowtimeDto.col,
+      2 * 60 * 1000,
+    );
   }
 
   @ApiBearerAuth()
@@ -154,6 +160,11 @@ export class ShowtimeController {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     }
 
-    return this.showtimeService.unlockSeat(id, user.id, lockSeatShowtimeDto.row, lockSeatShowtimeDto.col);
+    return this.showtimeService.unlockSeat(
+      id,
+      user.id,
+      lockSeatShowtimeDto.row,
+      lockSeatShowtimeDto.col,
+    );
   }
 }

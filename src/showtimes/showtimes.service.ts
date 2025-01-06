@@ -12,8 +12,8 @@ export class ShowtimeService {
     @InjectModel(Showtime.name)
     private showtimeModel: Model<ShowtimeDocument> &
       PaginateModel<ShowtimeDocument>,
-    private schedulerRegistry: SchedulerRegistry
-  ) { }
+    private schedulerRegistry: SchedulerRegistry,
+  ) {}
 
   async create(
     createShowtimeDto: CreateShowtimeDto,
@@ -55,9 +55,7 @@ export class ShowtimeService {
   }
 
   async findOne(id: string): Promise<ShowtimeDocument> {
-    const showtime = await this.showtimeModel
-      .findById(id)
-      .exec();
+    const showtime = await this.showtimeModel.findById(id).exec();
 
     if (!showtime) {
       throw new HttpException('Showtime not found', HttpStatus.NOT_FOUND);
@@ -101,54 +99,91 @@ export class ShowtimeService {
     return this.showtimeModel.findByIdAndDelete(id).exec();
   }
 
-  async lockSeat(id: string, _userId: string, row: number, col: number, delay: number): Promise<boolean> {
+  async lockSeat(
+    id: string,
+    _userId: string,
+    row: number,
+    col: number,
+    delay: number,
+  ): Promise<boolean> {
     const userId = new Types.ObjectId(_userId);
     const showtime = await this.showtimeModel.findById(id);
 
     if (!showtime) return false;
-	if (showtime.lockedSeats.some((s) => (s.row === row && s.col === col))) return false;
-	if (showtime.bookedSeats.some((s) => (s.row === row && s.col === col))) return false;
+    if (showtime.lockedSeats.some((s) => s.row === row && s.col === col))
+      return false;
+    if (showtime.bookedSeats.some((s) => s.row === row && s.col === col))
+      return false;
 
     await showtime.updateOne({ $push: { lockedSeats: { userId, row, col } } });
 
     if (delay > 0) {
       const timeout = setTimeout(() => {
-        this.showtimeModel.findByIdAndUpdate(id, { $pull: { lockedSeats: { userId, row, col } } })
+        this.showtimeModel.findByIdAndUpdate(id, {
+          $pull: { lockedSeats: { userId, row, col } },
+        });
       }, delay);
 
-      this.schedulerRegistry.addTimeout(`${id}-${_userId}-${row}-${col}-lock`, timeout);
+      this.schedulerRegistry.addTimeout(
+        `${id}-${_userId}-${row}-${col}-lock`,
+        timeout,
+      );
     }
 
     return true;
   }
 
-  async unlockSeat(id: string, _userId: string, row: number, col: number): Promise<boolean> {
+  async unlockSeat(
+    id: string,
+    _userId: string,
+    row: number,
+    col: number,
+  ): Promise<boolean> {
     const userId = new Types.ObjectId(_userId);
     const showtime = await this.showtimeModel.findById(id);
 
-    if (!showtime || !(showtime.lockedSeats.some((s) => (s.userId.toString() === _userId && s.row === row && s.col === col)))) return false;
+    if (
+      !showtime ||
+      !showtime.lockedSeats.some(
+        (s) =>
+          s.userId.toString() === _userId && s.row === row && s.col === col,
+      )
+    )
+      return false;
 
     await showtime.updateOne({ $pull: { lockedSeats: { userId, row, col } } });
 
     const name = `${id}-${_userId}-${row}-${col}-lock`;
-    if (this.schedulerRegistry.doesExist("timeout", name)) {
+    if (this.schedulerRegistry.doesExist('timeout', name)) {
       this.schedulerRegistry.deleteTimeout(name);
     }
 
-	return true;
+    return true;
   }
 
   async bookSeat(id: string, row: number, col: number): Promise<void> {
     const showtime = await this.showtimeModel.findById(id);
-    if (!showtime || showtime.lockedSeats.some((s) => (s.row === row && s.col === col))) return;
+    if (
+      !showtime ||
+      showtime.lockedSeats.some((s) => s.row === row && s.col === col)
+    )
+      return;
 
-    await this.showtimeModel.findByIdAndUpdate(id, { $push: { bookedSeats: { row, col } } })
+    await this.showtimeModel.findByIdAndUpdate(id, {
+      $push: { bookedSeats: { row, col } },
+    });
   }
 
   async unbookSeat(id: string, row: number, col: number): Promise<void> {
     const showtime = await this.showtimeModel.findById(id);
-    if (!showtime || !(showtime.bookedSeats.some((s) => (s.row === row && s.col === col)))) return;
+    if (
+      !showtime ||
+      !showtime.bookedSeats.some((s) => s.row === row && s.col === col)
+    )
+      return;
 
-    await this.showtimeModel.findByIdAndUpdate(id, { $pull: { bookedSeats: { row, col } } })
+    await this.showtimeModel.findByIdAndUpdate(id, {
+      $pull: { bookedSeats: { row, col } },
+    });
   }
 }

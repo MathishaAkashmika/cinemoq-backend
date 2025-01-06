@@ -9,9 +9,7 @@ import { ShowtimeModule } from 'src/showtimes/showtimes.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: Booking.name, schema: BookingSchema },
-    ]),
+    MongooseModule.forFeature([{ name: Booking.name, schema: BookingSchema }]),
     UserModule,
     ClsModule,
     ShowtimeModule,
@@ -19,4 +17,4 @@ import { ShowtimeModule } from 'src/showtimes/showtimes.module';
   controllers: [BookingsController],
   providers: [BookingsService],
 })
-export class BookingsModule { }
+export class BookingsModule {}

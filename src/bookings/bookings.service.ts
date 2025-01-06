@@ -10,17 +10,17 @@ export class BookingsService {
     @InjectModel(Booking.name)
     private bookingModel: Model<BookingDocument> &
       PaginateModel<BookingDocument>,
-  ) { }
+  ) {}
 
   async create(
     userId: string,
-	totalAmount: number,
+    totalAmount: number,
     createBookingDto: CreateBookingDto,
   ): Promise<BookingDocument> {
     const booking = new this.bookingModel({
       ...createBookingDto,
       userId: new Types.ObjectId(userId),
-	  totalAmount,
+      totalAmount,
       completed: false,
     });
 

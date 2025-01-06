@@ -13,14 +13,14 @@ import { Type } from 'class-transformer';
 
 class SeatLayout {
   @ApiProperty({
-	description: 'Row of seat',
-	example: 5,
+    description: 'Row of seat',
+    example: 5,
   })
   rows: number;
 
   @ApiProperty({
-	description: 'Column of seat',
-	example: 6,
+    description: 'Column of seat',
+    example: 6,
   })
   cols: number;
 }

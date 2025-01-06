@@ -19,7 +19,11 @@ const SeatSchema = SchemaFactory.createForClass(Seat);
 
 @Schema({ timestamps: true })
 export class Booking {
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Showtime', required: true })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: 'Showtime',
+    required: true,
+  })
   showtimeId: Types.ObjectId;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'User', required: true })
