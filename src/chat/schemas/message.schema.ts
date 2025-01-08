@@ -1,36 +1,41 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-@Schema({ timestamps: true }) // Adds createdAt and updatedAt automatically
+@Schema({ timestamps: true })
 export class Message extends Document {
   @Prop({ required: true })
-  content: string; // Main message text
+  content: string;
 
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  userId: Types.ObjectId; // Link to the user who sent the message
+  userId: Types.ObjectId;
 
   @Prop()
-  firstName: string; // Populated from the user's collection for convenience
+  firstName: string;
 
   @Prop()
-  lastName: string; // Populated from the user's collection for convenience
+  lastName: string;
+
+  @Prop()
+  profilePicture: string;
 
   @Prop([
     {
-      content: { type: String, required: true }, // Text of the reply
-      userId: { type: Types.ObjectId, ref: 'User', required: true }, // User who replied
-      firstName: { type: String }, // Reply sender's first name
-      lastName: { type: String },  // Reply sender's last name
-      createdAt: { type: Date, default: Date.now }, // Timestamp for the reply
+      content: { type: String, required: true },
+      userId: { type: Types.ObjectId, ref: 'User', required: true },
+      firstName: String,
+      lastName: String,
+      profilePicture: String,
+      createdAt: { type: Date, default: Date.now },
     },
   ])
-  replies: Types.Array<{
+  replies: Array<{
     content: string;
     userId: Types.ObjectId;
     firstName: string;
     lastName: string;
+    profilePicture: string;
     createdAt: Date;
-  }>; // Array of replies
+  }>;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);
