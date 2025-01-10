@@ -161,7 +161,7 @@ export class ShowtimeService {
     return true;
   }
 
-  async bookSeat(id: string, row: number, col: number): Promise<void> {
+    async bookSeat(id: string, row: number, col: number): Promise<void> {
     const showtime = await this.showtimeModel.findById(id);
     if (
       !showtime ||

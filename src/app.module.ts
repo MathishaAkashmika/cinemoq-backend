@@ -12,6 +12,7 @@ import { UserModule } from './users/users.module';
 import { S3Module } from './s3/s3.module';
 import { MoviesModule } from './movies/movies.module';
 import { ShowtimeModule } from './showtimes/showtimes.module';
+import { AnnouncementsModule } from './announcements/announcements.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { ScheduleModule } from '@nestjs/schedule';
 
@@ -65,6 +66,7 @@ mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
     MoviesModule,
     ShowtimeModule,
     BookingsModule,
+    AnnouncementsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

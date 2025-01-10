@@ -20,7 +20,7 @@ export class Message extends Document {
       content: { type: String, required: true }, // Text of the reply
       userId: { type: Types.ObjectId, ref: 'User', required: true }, // User who replied
       firstName: { type: String }, // Reply sender's first name
-      lastName: { type: String },  // Reply sender's last name
+      lastName: { type: String }, // Reply sender's last name
       createdAt: { type: Date, default: Date.now }, // Timestamp for the reply
     },
   ])
