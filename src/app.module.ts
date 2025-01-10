@@ -11,6 +11,7 @@ import mongoose from 'mongoose';
 import { UserModule } from './users/users.module';
 import { S3Module } from './s3/s3.module';
 import { MoviesModule } from './movies/movies.module';
+import { CareersModule } from './careers/careers.module';
 import { ShowtimeModule } from './showtimes/showtimes.module';
 import { AnnouncementsModule } from './announcements/announcements.module';
 import { BookingsModule } from './bookings/bookings.module';
@@ -67,6 +68,7 @@ mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
     ShowtimeModule,
     BookingsModule,
     AnnouncementsModule,
+    CareersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
