@@ -29,7 +29,7 @@ export class AuthController {
   ) {}
 
   @Post('signup')
-  async signup(@Body() signupDto: SignupDto): Promise<{ message: string; user: UserResponse }> {
+  async signup(@Body() signupDto: SignupDto) {
     try {
       const existingUser = await this.usersService.findOne({
         email: signupDto.email,
@@ -53,19 +53,7 @@ export class AuthController {
         profileImage: profileImageUrl,
       });
 
-      return {
-        message: 'User created successfully',
-        user: {
-          id: user._id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          type: user.userType,
-          gender: user.gender,
-          address: user.address,
-          profileImage: user.profileImage,
-        },
-      };
+      return this.authService.login(user);
     } catch (error) {
       throw new HttpException(
         error.message || 'Something went wrong',
