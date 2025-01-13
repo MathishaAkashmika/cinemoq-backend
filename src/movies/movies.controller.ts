@@ -122,6 +122,12 @@ export class MovieController {
     });
   }
 
+  @Get('/byCategory/:id')
+  @ApiOperation({ summary: 'Get movies by category' })
+  findByCategory(@Param('id') id: string) {
+    return this.moviesService.findByCategory(id);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get movie by ID' })
   findOne(@Param('id') id: string) {

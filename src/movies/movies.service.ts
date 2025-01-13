@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, PaginateModel, PaginateResult } from 'mongoose';
+import { Model, PaginateModel, PaginateResult, Types } from 'mongoose';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { Movie, MovieDocument } from './entities/movie.entity';
@@ -79,6 +79,10 @@ export class MoviesService {
   private createSortObject(sortBy: string): Record<string, 1 | -1> {
     const [field, order] = sortBy.split(':');
     return { [field]: order === 'desc' ? -1 : 1 };
+  }
+
+  async findByCategory(categoryId: string): Promise<MovieDocument[]> {
+    return this.movieModel.find({categoryId: new Types.ObjectId(categoryId)}).exec();
   }
 
   async findOne(query: any): Promise<MovieDocument | null> {

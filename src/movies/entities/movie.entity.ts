@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
 import { Document } from 'mongoose';
 import * as mongoosePaginate from 'mongoose-paginate-v2';
 import {
@@ -47,6 +48,10 @@ export class Movie {
   @IsString()
   @Prop({ default: '' })
   genre: string;
+
+  @IsString()
+  @Prop({ default: '' })
+  categoryId: Types.ObjectId;
 
   @IsString()
   @Prop({ default: '' })
