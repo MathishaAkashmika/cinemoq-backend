@@ -14,6 +14,7 @@ import { MoviesModule } from './movies/movies.module';
 import { ShowtimeModule } from './showtimes/showtimes.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { CategoriesModule } from './categories/categories.module';
 
 mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
   Logger.verbose(
@@ -65,6 +66,7 @@ mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
     MoviesModule,
     ShowtimeModule,
     BookingsModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
