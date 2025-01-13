@@ -9,6 +9,7 @@ import {
   IsBoolean,
   IsArray,
   IsOptional,
+  IsMongoId,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -70,6 +71,14 @@ export class CreateMovieDto {
   @IsOptional()
   @IsString()
   genre: string;
+
+  @ApiPropertyOptional({
+    description: 'Movie category',
+    example: 'dasdafafagasfa',
+  })
+  @IsOptional()
+  @IsMongoId()
+  categoryId: string;
 
   @ApiPropertyOptional({
     description: 'Movie director',
