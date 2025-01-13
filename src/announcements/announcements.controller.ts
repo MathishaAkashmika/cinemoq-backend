@@ -42,7 +42,10 @@ export class AnnouncementsController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   @ApiOperation({ summary: 'Create announcement' })
-  @ApiResponse({ status: 201, description: 'The announcement has been created' })
+  @ApiResponse({
+    status: 201,
+    description: 'The announcement has been created',
+  })
   async create(@Body() createAnnouncementDto: CreateAnnouncementDto) {
     const context = this.clsService.get<AppClsStore>();
     if (!context || !context.user) {
@@ -128,7 +131,10 @@ export class AnnouncementsController {
   @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   @ApiOperation({ summary: 'Update announcement' })
-  @ApiResponse({ status: 200, description: 'The announcement has been updated' })
+  @ApiResponse({
+    status: 200,
+    description: 'The announcement has been updated',
+  })
   async update(
     @Param('id') id: string,
     @Body() updateAnnouncementDto: UpdateAnnouncementDto,
@@ -152,7 +158,10 @@ export class AnnouncementsController {
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   @ApiOperation({ summary: 'Delete announcement' })
-  @ApiResponse({ status: 200, description: 'The announcement has been deleted' })
+  @ApiResponse({
+    status: 200,
+    description: 'The announcement has been deleted',
+  })
   async remove(@Param('id') id: string) {
     const context = this.clsService.get<AppClsStore>();
     if (!context || !context.user) {

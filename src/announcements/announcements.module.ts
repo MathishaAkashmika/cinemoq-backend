@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Announcement, AnnouncementSchema } from './entities/announcement.entity';
+import {
+  Announcement,
+  AnnouncementSchema,
+} from './entities/announcement.entity';
 import { AnnouncementsController } from './announcements.controller';
 import { AnnouncementsService } from './announcements.service';
 import { UserModule } from 'src/users/users.module';

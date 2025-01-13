@@ -7,6 +7,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { UserModule } from '../users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClsModule } from 'nestjs-cls';
+import { S3Module } from '../s3/s3.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ClsModule } from 'nestjs-cls';
     }),
     UserModule,
     ClsModule,
+    S3Module,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

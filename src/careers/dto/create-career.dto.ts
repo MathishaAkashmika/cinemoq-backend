@@ -1,9 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsNotEmpty,
-  IsString,
-  IsOptional,
-} from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
 export class CreateCareerDto {
   @ApiProperty({
@@ -16,7 +12,8 @@ export class CreateCareerDto {
 
   @ApiProperty({
     description: 'Detailed description of the career position',
-    example: 'We are looking for an experienced software engineer to join our team...',
+    example:
+      'We are looking for an experienced software engineer to join our team...',
   })
   @IsNotEmpty()
   @IsString()

@@ -19,7 +19,7 @@ describe('AnnouncementsController (e2e)', () => {
     name: 'Test Announcement',
     description: 'Test Description',
     startDate: new Date('2024-01-01'),
-    endDate: new Date('2024-12-31')
+    endDate: new Date('2024-12-31'),
   };
 
   beforeAll(async () => {
@@ -31,12 +31,20 @@ describe('AnnouncementsController (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
 
-    dbConnection = moduleFixture.get<DatabaseService>(DatabaseService).getDbHandle();
+    dbConnection = moduleFixture
+      .get<DatabaseService>(DatabaseService)
+      .getDbHandle();
     authService = moduleFixture.get<AuthService>(AuthService);
 
     // Generate tokens for testing
-    adminToken = await authService.generateToken({ email: 'admin@test.com', role: 'admin' });
-    userToken = await authService.generateToken({ email: 'user@test.com', role: 'user' });
+    adminToken = await authService.generateToken({
+      email: 'admin@test.com',
+      role: 'admin',
+    });
+    userToken = await authService.generateToken({
+      email: 'user@test.com',
+      role: 'user',
+    });
   });
 
   afterAll(async () => {
@@ -73,7 +81,7 @@ describe('AnnouncementsController (e2e)', () => {
         .send({
           name: '',
           description: 'Test',
-          startDate: 'invalid-date'
+          startDate: 'invalid-date',
         })
         .expect(400);
     });
@@ -131,7 +139,7 @@ describe('AnnouncementsController (e2e)', () => {
 
     const updateData: UpdateAnnouncementDto = {
       name: 'Updated Announcement',
-      description: 'Updated Description'
+      description: 'Updated Description',
     };
 
     it('should update announcement when admin is authenticated', () => {
@@ -160,7 +168,7 @@ describe('AnnouncementsController (e2e)', () => {
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           name: '',
-          startDate: 'invalid-date'
+          startDate: 'invalid-date',
         })
         .expect(400);
     });

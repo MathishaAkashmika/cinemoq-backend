@@ -1,10 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsNotEmpty,
-  IsDate,
-  IsString,
-  ValidateIf,
-} from 'class-validator';
+import { IsNotEmpty, IsDate, IsString, ValidateIf } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateAnnouncementDto {
@@ -18,7 +13,8 @@ export class CreateAnnouncementDto {
 
   @ApiProperty({
     description: 'Announcement description',
-    example: 'Join us for a special holiday screening event with exclusive movies and offers!',
+    example:
+      'Join us for a special holiday screening event with exclusive movies and offers!',
   })
   @IsNotEmpty()
   @IsString()

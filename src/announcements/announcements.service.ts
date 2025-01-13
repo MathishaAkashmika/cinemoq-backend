@@ -3,7 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, PaginateModel, PaginateResult } from 'mongoose';
 import { CreateAnnouncementDto } from './dto/create-announcement.dto';
 import { UpdateAnnouncementDto } from './dto/update-announcement.dto';
-import { Announcement, AnnouncementDocument } from './entities/announcement.entity';
+import {
+  Announcement,
+  AnnouncementDocument,
+} from './entities/announcement.entity';
 
 @Injectable()
 export class AnnouncementsService {
@@ -16,7 +19,9 @@ export class AnnouncementsService {
   async create(
     createAnnouncementDto: CreateAnnouncementDto,
   ): Promise<AnnouncementDocument> {
-    const createdAnnouncement = new this.announcementModel(createAnnouncementDto);
+    const createdAnnouncement = new this.announcementModel(
+      createAnnouncementDto,
+    );
     return createdAnnouncement.save();
   }
 

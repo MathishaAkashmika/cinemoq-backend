@@ -1,25 +1,74 @@
-import { IsEmail, IsNotEmpty, IsEnum } from 'class-validator';
+import { IsNotEmpty, IsEmail, MinLength, IsOptional, IsEnum } from 'class-validator';
 import { UserType } from 'src/Types/users.types';
 import { ApiProperty } from '@nestjs/swagger';
 
+enum Gender {
+  MALE = 'male',
+  FEMALE = 'female',
+  OTHER = 'other'
+}
+
 export class CreateUserDto {
+  @ApiProperty({
+    description: 'The first name of the user',
+    example: 'John',
+    required: true,
+  })
   @IsNotEmpty()
-  @ApiProperty({ description: 'The First of the user' })
   firstName: string;
 
+  @ApiProperty({
+    description: 'The last name of the user',
+    example: 'Doe',
+    required: true,
+  })
   @IsNotEmpty()
-  @ApiProperty({ description: 'The Last of the user' })
   lastName: string;
 
+  @ApiProperty({
+    description: 'The email address of the user',
+    example: 'john.doe@example.com',
+    required: true,
+  })
   @IsEmail()
-  @ApiProperty({ description: 'The email of the user' })
   email: string;
 
+  @ApiProperty({
+    description: 'The password for the account (minimum 6 characters)',
+    example: 'password123',
+    minimum: 6,
+    required: true,
+  })
   @IsNotEmpty()
-  @ApiProperty({ description: 'The password of the user' })
+  @MinLength(6)
   password: string;
 
-  @IsEnum(UserType)
-  @ApiProperty({ description: 'The role of the user', enum: UserType })
-  userType: UserType;
+  @ApiProperty({
+    description: 'The gender of the user',
+    enum: Gender,
+    example: Gender.MALE,
+    required: true,
+  })
+  @IsNotEmpty()
+  @IsEnum(Gender)
+  gender: Gender;
+
+  @ApiProperty({
+    description: 'The address of the user',
+    example: '123 Main St, City, Country',
+    required: true,
+  })
+  @IsNotEmpty()
+  address: string;
+
+  @ApiProperty({
+    description: 'The profile image URL of the user',
+    example: 'https://example.com/profile.jpg',
+    required: false,
+  })
+  @IsOptional()
+  profileImage?: string;
+
+  @IsOptional()
+  userType: UserType = UserType.CLIENT;
 }
