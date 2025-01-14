@@ -37,6 +37,9 @@ export class Booking {
 
   @Prop({ required: true })
   completed: boolean;
+
+  @Prop()
+  s3Url: string;
 }
 
 const BookingSchema = SchemaFactory.createForClass(Booking);

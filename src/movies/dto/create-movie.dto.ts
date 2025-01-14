@@ -64,13 +64,6 @@ export class CreateMovieDto {
   @Min(0)
   price: number;
 
-  @ApiPropertyOptional({
-    description: 'Movie genre',
-    example: 'Action',
-  })
-  @IsOptional()
-  @IsString()
-  genre: string;
 
   @ApiPropertyOptional({
     description: 'Movie category',

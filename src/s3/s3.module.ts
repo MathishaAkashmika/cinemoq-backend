@@ -3,6 +3,7 @@ import { S3Service } from './s3.service';
 import { S3Controller } from './s3.controller';
 
 @Module({
+  exports: [S3Service],
   controllers: [S3Controller],
   providers: [S3Service],
 })
