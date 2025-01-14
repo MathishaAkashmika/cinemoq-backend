@@ -82,7 +82,9 @@ export class MoviesService {
   }
 
   async findByCategory(categoryId: string): Promise<MovieDocument[]> {
-    return this.movieModel.find({categoryId: new Types.ObjectId(categoryId)}).exec();
+    return this.movieModel
+      .find({ categoryId: new Types.ObjectId(categoryId) })
+      .exec();
   }
 
   async findOne(query: any): Promise<MovieDocument | null> {

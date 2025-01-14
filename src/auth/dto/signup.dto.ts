@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsEmail, MinLength, IsOptional, IsEnum } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsEmail,
+  MinLength,
+  IsOptional,
+  IsEnum,
+} from 'class-validator';
 import { UserType, Gender } from 'src/Types/users.types';
 import { ApiProperty } from '@nestjs/swagger';
 

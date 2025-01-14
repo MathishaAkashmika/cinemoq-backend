@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as bcrypt from 'bcrypt';
 import { UserDocument } from 'src/users/entities/user.entity';
 
@@ -10,6 +11,7 @@ jest.mock('bcrypt');
 
 describe('AuthService', () => {
   let authService: AuthService;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let usersService: UsersService;
   let jwtService: JwtService;
 
@@ -98,6 +100,7 @@ describe('AuthService', () => {
         // Add other mock implementations
       } as unknown as UserDocument;
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const mockJwtService = {
         signAsync: jest.fn().mockResolvedValue('jwtToken'),
       };

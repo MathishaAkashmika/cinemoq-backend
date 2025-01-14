@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { S3Service } from './s3.service';
 import {

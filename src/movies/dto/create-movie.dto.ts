@@ -64,7 +64,6 @@ export class CreateMovieDto {
   @Min(0)
   price: number;
 
-
   @ApiPropertyOptional({
     description: 'Movie category',
     example: 'dasdafafagasfa',

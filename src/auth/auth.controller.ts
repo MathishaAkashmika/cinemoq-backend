@@ -40,11 +40,14 @@ export class AuthController {
 
       let profileImageUrl = null;
       if (signupDto.profileImage) {
-        const { s3url } = await this.s3Service.generatePresignedUrl({
-          fileName: `${signupDto.firstName}-${signupDto.lastName}-profile`,
-          domain: BucketDomains.PROFILE_IMAGES,
-          contentType: 'image/jpeg',
-        }, true);
+        const { s3url } = await this.s3Service.generatePresignedUrl(
+          {
+            fileName: `${signupDto.firstName}-${signupDto.lastName}-profile`,
+            domain: BucketDomains.PROFILE_IMAGES,
+            contentType: 'image/jpeg',
+          },
+          true,
+        );
         profileImageUrl = s3url;
       }
 

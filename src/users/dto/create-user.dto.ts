@@ -1,11 +1,17 @@
-import { IsNotEmpty, IsEmail, MinLength, IsOptional, IsEnum } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsEmail,
+  MinLength,
+  IsOptional,
+  IsEnum,
+} from 'class-validator';
 import { UserType } from 'src/Types/users.types';
 import { ApiProperty } from '@nestjs/swagger';
 
 enum Gender {
   MALE = 'male',
   FEMALE = 'female',
-  OTHER = 'other'
+  OTHER = 'other',
 }
 
 export class CreateUserDto {
