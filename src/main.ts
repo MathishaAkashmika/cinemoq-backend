@@ -35,8 +35,8 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('Inventory Management system')
-    .setDescription(' Inventory Management system Backend API')
+    .setTitle('CINEMOQ')
+    .setDescription(' CINEMOQ Backend API')
     .setVersion('1.0')
     .addTag('IMS')
     .addBearerAuth()
