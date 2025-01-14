@@ -162,7 +162,7 @@ export class BookingsController {
 		const ticketDoc = new jsPDF();
 
 		ticketDoc.setFontSize(40);
-		ticketDoc.text("Thank you for purchasing!", 35, 25);
+		ticketDoc.text(" CINEMOQ - Thank you for purchasing!", 35, 25);
 		ticketDoc.addImage(qrCode, 'JPEG', 15, 40, 180, 180);
 
 		const buffer = ticketDoc.output("arraybuffer")
