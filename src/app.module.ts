@@ -9,13 +9,6 @@ import { ClsModule } from 'nestjs-cls';
 import { AuthModule } from './auth/auth.module';
 import mongoose from 'mongoose';
 import { UserModule } from './users/users.module';
-import { S3Module } from './s3/s3.module';
-import { MoviesModule } from './movies/movies.module';
-import { ShowtimeModule } from './showtimes/showtimes.module';
-import { BookingsModule } from './bookings/bookings.module';
-import { ScheduleModule } from '@nestjs/schedule';
-import { CategoriesModule } from './categories/categories.module';
-import { ReviewsModule } from './reviews/reviews.module';
 
 mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
   Logger.verbose(
@@ -26,18 +19,11 @@ mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
 
 @Module({
   imports: [
-    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
       validationSchema: Joi.object({
         MONGO_URI: Joi.string().required(),
-        AWS_REGION: Joi.string().required(),
-        AWS_BUCKET_NAME: Joi.string().required(),
-        AWS_ACCESS_KEY_ID: Joi.string().required(),
-        AWS_SECRET_ACCESS_KEY: Joi.string().required(),
-        PAYPAL_CLIENT_ID: Joi.string().required(),
-        PAYPAL_CLIENT_SECRET: Joi.string().required(),
       }),
     }),
     MongooseModule.forRoot(
@@ -63,12 +49,6 @@ mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
     }),
     AuthModule,
     UserModule,
-    S3Module,
-    MoviesModule,
-    ShowtimeModule,
-    BookingsModule,
-    CategoriesModule,
-    ReviewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
