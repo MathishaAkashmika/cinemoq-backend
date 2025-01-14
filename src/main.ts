@@ -35,11 +35,15 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('Inventory Management system')
-    .setDescription(' Inventory Management system Backend API')
+    .setTitle('Cinema Booking System')
+    .setDescription(' Cinema Booking System API')
     .setVersion('1.0')
-    .addTag('IMS')
-    .addBearerAuth()
+    .addTag('Cinema Booking System')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+    }, 'JWT')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('doc', app, document);
