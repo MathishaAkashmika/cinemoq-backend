@@ -13,8 +13,10 @@ import { AuthGuard } from '@nestjs/passport';
 import { UsersService } from 'src/users/users.service';
 import { SignupDto } from './dto/signup.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { AppClsStore, UserType } from 'src/Types/users.types';
+import { AppClsStore, UserType, UserResponse } from 'src/Types/users.types';
 import { ClsService } from 'nestjs-cls';
+import { S3Service } from '../s3/s3.service';
+import { BucketDomains } from 'src/Types/s3.types';
 
 @Controller({ path: 'auth', version: '1' })
 @ApiTags('auth')
@@ -23,6 +25,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly clsService: ClsService,
     private readonly usersService: UsersService,
+    private readonly s3Service: S3Service,
   ) {}
 
   @Post('signup')
@@ -35,17 +38,22 @@ export class AuthController {
         throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
       }
 
-      const user = await this.usersService.create(signupDto);
-      return {
-        message: 'User created successfully',
-        user: {
-          id: user._id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          type: user.userType,
-        },
-      };
+      let profileImageUrl = null;
+      if (signupDto.profileImage) {
+        const { s3url } = await this.s3Service.generatePresignedUrl({
+          fileName: `${signupDto.firstName}-${signupDto.lastName}-profile`,
+          domain: BucketDomains.PROFILE_IMAGES,
+          contentType: 'image/jpeg',
+        }, true);
+        profileImageUrl = s3url;
+      }
+
+      const user = await this.usersService.create({
+        ...signupDto,
+        profileImage: profileImageUrl,
+      });
+
+      return this.authService.login(user);
     } catch (error) {
       throw new HttpException(
         error.message || 'Something went wrong',
@@ -66,7 +74,7 @@ export class AuthController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Get('profile')
-  async getProfile() {
+  async getProfile(): Promise<UserResponse> {
     const context = this.clsService.get<AppClsStore>();
     if (!context || !context.user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
@@ -83,13 +91,16 @@ export class AuthController {
       firstName: user.firstName,
       lastName: user.lastName,
       type: user.userType,
+      gender: user.gender,
+      address: user.address,
+      profileImage: user.profileImage,
     };
   }
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @Get('admin')
-  async admin() {
+  async admin(): Promise<UserResponse> {
     const context = this.clsService.get<AppClsStore>();
     if (!context || !context.user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
@@ -110,6 +121,9 @@ export class AuthController {
       firstName: user.firstName,
       lastName: user.lastName,
       type: user.userType,
+      gender: user.gender,
+      address: user.address,
+      profileImage: user.profileImage,
     };
   }
 }

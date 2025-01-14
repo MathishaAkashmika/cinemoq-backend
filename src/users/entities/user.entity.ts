@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as mongoosePaginate from 'mongoose-paginate-v2';
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsEnum, IsOptional } from 'class-validator';
 import * as bcrypt from 'bcrypt';
-import { UserType } from 'src/Types/users.types';
+import { UserType, Gender } from 'src/Types/users.types';
 
 export interface UserMethods {
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -30,6 +30,18 @@ export class User {
   @IsNotEmpty()
   @Prop({ required: true })
   password: string;
+
+  @IsEnum(Gender)
+  @Prop({ required: true, enum: Gender })
+  gender: Gender;
+
+  @IsNotEmpty()
+  @Prop({ required: true })
+  address: string;
+
+  @IsOptional()
+  @Prop({ required: false })
+  profileImage?: string;
 
   @Prop({ required: true })
   userType: UserType;

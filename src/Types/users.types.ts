@@ -19,6 +19,23 @@ export interface MinimalUser {
   lastName: string;
 }
 
+export enum Gender {
+  MALE = 'male',
+  FEMALE = 'female',
+  OTHER = 'other',
+}
+
+export interface UserResponse {
+  id: unknown;
+  email: string;
+  firstName: string;
+  lastName: string;
+  type: UserType;
+  gender: Gender;
+  address: string;
+  profileImage?: string;
+}
+
 export interface JwtPayload {
   sub: string;
   email: string;

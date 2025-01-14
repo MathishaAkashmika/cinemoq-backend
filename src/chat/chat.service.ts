@@ -5,10 +5,15 @@ import { Message } from './schemas/message.schema';
 
 @Injectable()
 export class ChatService {
-  constructor(@InjectModel(Message.name) private messageModel: Model<Message>) {}
+  constructor(
+    @InjectModel(Message.name) private messageModel: Model<Message>,
+  ) {}
 
   // Create a new message
-  async createMessage(content: string, user: { userId: string; firstName: string; lastName: string }) {
+  async createMessage(
+    content: string,
+    user: { userId: string; firstName: string; lastName: string },
+  ) {
     const newMessage = new this.messageModel({
       content,
       userId: user.userId,
@@ -21,7 +26,12 @@ export class ChatService {
   // Add a reply to a message
   async addReply(
     messageId: string,
-    reply: { content: string; userId: string; firstName: string; lastName: string },
+    reply: {
+      content: string;
+      userId: string;
+      firstName: string;
+      lastName: string;
+    },
   ) {
     return this.messageModel.findByIdAndUpdate(
       messageId,
