@@ -17,6 +17,7 @@ import { AnnouncementsModule } from './announcements/announcements.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CategoriesModule } from './categories/categories.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
   Logger.verbose(
@@ -37,8 +38,8 @@ mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
         AWS_BUCKET_NAME: Joi.string().required(),
         AWS_ACCESS_KEY_ID: Joi.string().required(),
         AWS_SECRET_ACCESS_KEY: Joi.string().required(),
-        PAYHERE_MERCHANT_ID: Joi.string().required(),
-        PAYHERE_MERCHANT_SECRET: Joi.string().required(),
+        PAYPAL_CLIENT_ID: Joi.string().required(),
+        PAYPAL_CLIENT_SECRET: Joi.string().required(),
       }),
     }),
     MongooseModule.forRoot(
@@ -69,6 +70,7 @@ mongoose.set('debug', (collectionName, methodName, ...methodArgs) => {
     ShowtimeModule,
     BookingsModule,
     CategoriesModule,
+    ReviewsModule,
     AnnouncementsModule,
     CareersModule,
   ],

@@ -47,10 +47,6 @@ export class Movie {
 
   @IsString()
   @Prop({ default: '' })
-  genre: string;
-
-  @IsString()
-  @Prop({ default: '' })
   categoryId: Types.ObjectId;
 
   @IsString()

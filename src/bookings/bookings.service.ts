@@ -63,4 +63,8 @@ export class BookingsService {
   async complete(id: string): Promise<void> {
     await this.bookingModel.findByIdAndUpdate(id, { completed: true }).exec();
   }
+
+  async setS3URL(id: string, url: string): Promise<void> {
+    await this.bookingModel.findByIdAndUpdate(id, { s3Url: url }).exec();
+  }
 }
